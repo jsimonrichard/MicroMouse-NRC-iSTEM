@@ -10,9 +10,3 @@
     };
   }
 #endif
-
-#include "standby.h"
-#include "startup.h"
-#include "buildmap.h"
-#include "home.h"
-#include "dash.h"

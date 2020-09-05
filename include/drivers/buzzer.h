@@ -6,10 +6,11 @@
       namespace buzzer {
         void setup( void );
 
-        void playStartSound( void );
-        void playMapCompleteSound( void );
-        void playSprintSound( void );
-        void playFinishSound( void );
+        void playStandBySound( void );
+        void playStartUpSound( void );
+        void playBuildMapSound( void );
+        void playHomeSound( void );
+        void playDashSound( void );
       }
     }
 #endif

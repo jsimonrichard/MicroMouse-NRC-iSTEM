@@ -1,4 +1,4 @@
-#define TRIG_PIN 9;
+#define TRIG_PIN 9
 #define ECHO_PINS {1, 2, 3, 4}
 
 #ifndef HEADER_PING

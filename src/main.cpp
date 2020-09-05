@@ -1,19 +1,34 @@
 #include <Arduino.h>
 
 // Drivers
-#include "drivers/drivers.h"
-#include "states/states.h"
+#include "drivers/motor.h"
+#include "drivers/ping.h"
+#include "drivers/button.h"
+#include "drivers/buzzer.h"
 
+// States
+#include "states/standby.h"
+#include "states/startup.h"
+#include "states/buildmap.h"
+#include "states/home.h"
+#include "states/dash.h"
+
+using namespace drivers;
 using namespace states;
 
 State state;
 
 void setup() {
-  // Setup
+  // Setup Serial
   Serial.begin(9600);
-  drivers::setup();
 
-  drivers::buzzer::playStandBySound();
+  // Setup Drivers
+  motor::setup();
+  ping::setup();
+  button::setup();
+  buzzer::setup();
+
+  buzzer::playStandBySound();
   state = StandBy;
 }
 

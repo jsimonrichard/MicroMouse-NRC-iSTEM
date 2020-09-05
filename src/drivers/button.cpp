@@ -11,7 +11,7 @@ namespace drivers {
         bool state = digitalRead(BUTTON_PIN);
         if(state == HIGH) {
             return true;
-        } else if (state == LOW) {
+        } else {
             return false;
         }
     }

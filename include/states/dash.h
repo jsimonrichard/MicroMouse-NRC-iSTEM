@@ -3,6 +3,6 @@
 #ifndef HEADER_DASH
 #define HEADER_DASH
   namespace states {
-    void home(State *state);
+    void dash(State *state);
   }
 #endif

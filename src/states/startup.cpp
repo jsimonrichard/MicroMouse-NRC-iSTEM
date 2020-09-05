@@ -1,5 +1,10 @@
 #include "states/startup.h"
-#include "drivers/drivers.h"
+
+// Drivers
+#include "drivers/motor.h"
+#include "drivers/ping.h"
+#include "drivers/button.h"
+#include "drivers/buzzer.h"
 
 namespace states {
   void startUp(State *state) {
@@ -7,6 +12,6 @@ namespace states {
 
     // Switch state
     drivers::buzzer::playBuildMapSound();
-    state = BuildMap;
+    *state = BuildMap;
   }
 }

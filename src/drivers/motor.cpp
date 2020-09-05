@@ -1,4 +1,5 @@
-#include "Arduino.h"
+#include <Arduino.h>
+#include "drivers/motor.h"
 
 namespace driver {
   namespace motor {

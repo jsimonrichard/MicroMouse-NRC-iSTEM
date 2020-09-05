@@ -5,7 +5,6 @@
   #define HEADER_MOTOR
   namespace drivers {
     namespace motor {
-    public:
       void setup( void );
 
       void setMotorL( int speed );

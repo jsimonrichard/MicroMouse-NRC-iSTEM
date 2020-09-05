@@ -1,9 +1,10 @@
-#include "Arduino.h"
+#include <Arduino.h>
+#include "drivers/button.h"
 
 namespace drivers {
   namespace button {
     void setup() {
-        pinMode(pin, INPUT);
+        pinMode(BUTTON_PIN, INPUT);
     }
 
     bool isPressed() {

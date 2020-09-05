@@ -4,7 +4,6 @@
   #define HEADER_BUZZER
     namespace drivers {
       namespace buzzer {
-      public:
         void setup( void );
 
         void playStartSound( void );

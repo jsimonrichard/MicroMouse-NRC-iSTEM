@@ -1,4 +1,5 @@
-#include "Arduino.h"
+#include <Arduino.h>
+#include "drivers/buzzer.h"
 
 namespace drivers {
   namespace buzzer {

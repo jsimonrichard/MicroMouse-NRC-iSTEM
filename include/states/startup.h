@@ -3,6 +3,9 @@
 #ifndef HEADER_STARTUP
 #define HEADER_STARTUP
   namespace states {
-    void startUp( State *state );
+    namespace startUp {
+      void start( State *state );
+      void loop( State *state );
+    }
   }
 #endif

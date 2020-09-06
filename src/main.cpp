@@ -28,27 +28,26 @@ void setup() {
   button::setup();
   buzzer::setup();
 
-  buzzer::playStandBySound();
-  state = StandBy;
+  standBy::start(&state);
 }
 
 void loop() {
   // Check State
   switch (state) {
     case StandBy:
-      standBy(&state);
+      standBy::loop(&state);
       break;
     case StartUp:
-      startUp(&state);
+      startUp::loop(&state);
       break;
     case BuildMap:
-      buildMap(&state);
+      buildMap::loop(&state);
       break;
     case Home:
-      home(&state);
+      home::loop(&state);
       break;
     case Dash:
-      dash(&state);
+      dash::loop(&state);
       break;
   }
   

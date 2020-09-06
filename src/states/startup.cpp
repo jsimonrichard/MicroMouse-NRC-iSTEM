@@ -6,12 +6,25 @@
 #include "drivers/button.h"
 #include "drivers/buzzer.h"
 
-namespace states {
-  void startUp(State *state) {
-    // Get square with the course
+using namespace drivers;
 
-    // Switch state
-    drivers::buzzer::playBuildMapSound();
-    *state = BuildMap;
+namespace states {
+  namespace startUp {
+
+    ping::PingResponse lastResponse;
+
+    void start(State *state) {
+      buzzer::playStartUpSound();
+      *state = StartUp;
+
+      lastResponse = ping::ping();
+    }
+
+    void loop(State *state) {
+      // Get square with the course
+      ping::PingResponse response = ping::ping();
+
+      lastResponse = response;
+    }
   }
 }

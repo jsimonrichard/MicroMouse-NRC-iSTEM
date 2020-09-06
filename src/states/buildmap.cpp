@@ -7,7 +7,13 @@
 #include "drivers/buzzer.h"
 
 namespace states {
-  void buildMap(State *state) {
-    
+  namespace buildMap {
+    void start(State *state) {
+
+    }
+
+    void loop(State *state) {
+      
+    }
   }
 }

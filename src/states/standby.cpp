@@ -1,4 +1,5 @@
 #include "states/standby.h"
+#include "states/startup.h"
 
 // Drivers
 #include "drivers/motor.h"
@@ -6,12 +7,19 @@
 #include "drivers/button.h"
 #include "drivers/buzzer.h"
 
+using namespace drivers;
+
 namespace states {
-  void standBy(State *state) {
-    if(drivers::button::isPressed()) {
-      // Switch state
-      drivers::buzzer::playStartSound();
-      *state = StartUp;
+  namespace standBy {
+    void start(State *state) {
+      buzzer::playStandBySound();
+      *state = StandBy;
+    }
+
+    void loop(State *state) {
+      if(drivers::button::isPressed()) {
+        startUp::start(state);
+      }
     }
   }
 }

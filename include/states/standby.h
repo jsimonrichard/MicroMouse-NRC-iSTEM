@@ -3,6 +3,9 @@
 #ifndef HEADER_STANDBY
 #define HEADER_STANDBY
   namespace states {
-    void standBy( State *state );
+    namespace standBy {
+      void start( State *state );
+      void loop( State *state );
+    }
   }
 #endif

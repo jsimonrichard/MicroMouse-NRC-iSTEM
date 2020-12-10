@@ -6,10 +6,18 @@
 #include "drivers/button.h"
 #include "drivers/buzzer.h"
 
+//Actions
+#include "actions/actions.h"
+
+using namespace drivers;
+
 namespace states {
   namespace buildMap {
-    void start(State *state) {
+    actions::Action action;
 
+    void start(State *state) {
+      buzzer::playBuildMapSound();
+      *state = BuildMap;
     }
 
     void loop(State *state) {

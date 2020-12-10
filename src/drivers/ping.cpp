@@ -12,7 +12,7 @@ namespace drivers {
       pinMode(ECHO_PINR, INPUT);
     }
 
-    PingResponse ping() { // returns inches
+    PingData ping() { // returns inches
       digitalWrite(TRIG_PIN, LOW); //turn off the Trig pin in case it was on before
       delayMicroseconds(2); //a very short break
 
@@ -20,7 +20,8 @@ namespace drivers {
       delayMicroseconds(10); //a short break to let the operation happen
       digitalWrite(TRIG_PIN, LOW); //turn off the Trig pin to end the sound wave output
 
-      PingResponse output;
+      PingData output;
+      output.time = millis();
 
       output.front = pulseIn(ECHO_PINF, HIGH) * 0.01348833 / 2;
       output.back = pulseIn(ECHO_PINB, HIGH) * 0.01348833 / 2;

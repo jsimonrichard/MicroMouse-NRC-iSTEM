@@ -9,17 +9,29 @@
   #define HEADER_PING
     namespace drivers {
       namespace ping {
-        struct PingResponse {
-          unsigned long time;
+        struct PingData {
+          unsigned long time; // in milliseconds
 
           double front;
           double back;
           double left;
           double right;
+
+          PingData operator+(PingData a) {
+            return {time-a.time, front+a.front, back+a.back, left+a.left, right+a.right};
+          }
+
+          PingData operator-(PingData a) {
+            return {time-a.time, front-a.front, back-a.back, left-a.left, right-a.right};
+          }
+
+          double avg() {
+            return (front+back+left+right) / 4;
+          }
         };
         
         void setup( void );
-        PingResponse ping( void );
+        PingData ping( void );
       }
     }
 #endif

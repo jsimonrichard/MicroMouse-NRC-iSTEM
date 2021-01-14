@@ -13,10 +13,14 @@
 #include "states/home.h"
 #include "states/dash.h"
 
+// The maze variable
+#include "maze.h"
+
 using namespace drivers;
 using namespace states;
 
 State state;
+maze::Maze my_maze;
 
 void setup() {
   // Setup Serial
@@ -38,13 +42,13 @@ void loop() {
       standBy::loop(&state);
       break;
     case StartUp:
-      startUp::loop(&state);
+      startUp::loop(&state, &my_maze);
       break;
     case BuildMap:
-      buildMap::loop(&state);
+      buildMap::loop(&state, &my_maze);
       break;
     case Home:
-      home::loop(&state);
+      home::loop(&state, &my_maze);
       break;
     case Dash:
       dash::loop(&state);

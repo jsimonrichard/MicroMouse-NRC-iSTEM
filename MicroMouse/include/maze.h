@@ -1,7 +1,5 @@
-#include <vector>
-
-#ifndef HEADER_MAP
-#define HEADER_MAP
+#ifndef HEADER_MAZE
+#define HEADER_MAZE
   namespace maze {
     class Maze {
       public:

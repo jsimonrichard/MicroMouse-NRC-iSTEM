@@ -4,4 +4,4 @@ This code base was written in C++, using PlatformIO to compile and load the code
 
 Please note that this code base and the robot itself is WIP. The robot, which is sponsored by iSTEM Geauga Early College High School, should look something like this:
 
-![robot](https://ibb.co/SrcG1hn)
+![robot](https://i.ibb.co/k1JvrR8/robot.png)

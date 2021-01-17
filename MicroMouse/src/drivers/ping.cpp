@@ -2,33 +2,48 @@
 #include "drivers/ping.h"
 
 namespace drivers {
-  namespace ping {
-    void setup(void) {
-      pinMode(TRIG_PIN, OUTPUT);
+  /* PingSensor Class */
+  PingSensor::PingSensor(int e_pin) {
+    echo_pin = e_pin;
+    pinMode(echo_pin, INPUT);
+  }
 
-      pinMode(ECHO_PINF, INPUT);
-      pinMode(ECHO_PINB, INPUT);
-      pinMode(ECHO_PINL, INPUT);
-      pinMode(ECHO_PINR, INPUT);
-    }
+  double PingSensor::read() {
+    return pulseIn(echo_pin, HIGH) * 0.01348833 / 2;
+  }
 
-    PingData ping() { // returns inches
-      digitalWrite(TRIG_PIN, LOW); //turn off the Trig pin in case it was on before
+  /* PingCollection Class */
+  PingCollection::PingCollection(
+    int t_pin,
+    PingSensor f_sensor,
+    PingSensor b_sensor,
+    PingSensor l_sensor,
+    PingSensor r_sensor) {
+      trig_pin = t_pin;
+      pinMode(trig_pin, OUTPUT);
+
+      front_sensor = f_sensor;
+      back_sensor = b_sensor;
+      left_sensor = l_sensor;
+      right_sensor = r_sensor;
+  }
+
+  PingData PingCollection::ping() {
+      digitalWrite(trig_pin, LOW); //turn off the Trig pin in case it was on before
       delayMicroseconds(2); //a very short break
 
-      digitalWrite(TRIG_PIN, HIGH); //turn on the Trig pin to send a sound wave
+      digitalWrite(trig_pin, HIGH); //turn on the Trig pin to send a sound wave
       delayMicroseconds(10); //a short break to let the operation happen
-      digitalWrite(TRIG_PIN, LOW); //turn off the Trig pin to end the sound wave output
+      digitalWrite(trig_pin, LOW); //turn off the Trig pin to end the sound wave output
 
       PingData output;
       output.time = millis();
 
-      output.front = pulseIn(ECHO_PINF, HIGH) * 0.01348833 / 2;
-      output.back = pulseIn(ECHO_PINB, HIGH) * 0.01348833 / 2;
-      output.left = pulseIn(ECHO_PINL, HIGH) * 0.01348833 / 2;
-      output.right = pulseIn(ECHO_PINR, HIGH) * 0.01348833 / 2;
+      output.front = front_sensor.read();
+      output.back = back_sensor.read();
+      output.left = left_sensor.read();
+      output.right = right_sensor.read();
 
       return output;
-    }
   }
 }

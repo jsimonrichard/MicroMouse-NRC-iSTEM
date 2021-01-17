@@ -2,15 +2,13 @@
 #include "drivers/motor.h"
 
 namespace drivers {
-  namespace motor {
-    void setup() {
-        //Set pins as outputs
-        pinMode(MOTOR_L_PIN, OUTPUT);
-        pinMode(MOTOR_R_PIN, OUTPUT);
-    }
+  Motor::Motor(int motor_pin) {
+    pin = motor_pin;
+    pinMode(pin, OUTPUT);
+  }
 
-    void setMotors(int lspeed, int rspeed) {
-        
-    }
+  void Motor::set(int motor_speed) {
+    speed = motor_speed;
+    // Set motor speed
   }
 }

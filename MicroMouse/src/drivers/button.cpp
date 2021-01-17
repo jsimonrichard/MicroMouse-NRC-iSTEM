@@ -2,18 +2,12 @@
 #include "drivers/button.h"
 
 namespace drivers {
-  namespace button {
-    void setup() {
-        pinMode(BUTTON_PIN, INPUT);
-    }
+  Button::Button(int button_pin) {
+    pin = button_pin;
+    pinMode(pin, INPUT);
+  }
 
-    bool isPressed() {
-        bool state = digitalRead(BUTTON_PIN);
-        if(state == HIGH) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+  bool Button::isPressed() {
+      return digitalRead(pin) == HIGH;
   }
 }

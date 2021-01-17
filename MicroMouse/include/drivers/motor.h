@@ -1,13 +1,20 @@
-#define MOTOR_L_PIN 15
-#define MOTOR_R_PIN 16
+
 
 #ifndef HEADER_MOTOR
-  #define HEADER_MOTOR
-    namespace drivers {
-      namespace motor {
-        void setup( void );
+#define HEADER_MOTOR
 
-        void setMotors( int lspeed, int rspeed );
-      }
-    }
+namespace drivers {
+  class Motor {
+    public:
+      Motor(int pin);
+
+      void set(int speed);
+      int get() { return speed; };
+
+    private:
+      int pin;
+      int speed;
+  }
+}
+
 #endif

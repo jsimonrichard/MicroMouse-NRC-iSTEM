@@ -1,16 +1,19 @@
-#define BUZZER_PIN 0
+#include <vector>
+
+using namespace std;
 
 #ifndef HEADER_BUZZER
-  #define HEADER_BUZZER
-    namespace drivers {
-      namespace buzzer {
-        void setup( void );
+#define HEADER_BUZZER
 
-        void playStandBySound( void );
-        void playStartUpSound( void );
-        void playBuildMapSound( void );
-        void playHomeSound( void );
-        void playDashSound( void );
-      }
-    }
+namespace drivers {
+  class Buzzer {
+    public:
+      Buzzer(int pin);
+      void play(vector<int[2]> sound);
+    
+    private:
+      int pin;
+  };
+}
+
 #endif

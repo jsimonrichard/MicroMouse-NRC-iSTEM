@@ -1,11 +1,15 @@
-#define BUTTON_PIN 0
-
 #ifndef HEADER_BUTTON
-  #define HEADER_BUTTON
-    namespace drivers {
-      namespace button {
-        void setup( void );
-        bool isPressed( void );
-      }
-    }
+#define HEADER_BUTTON
+
+namespace drivers {
+  class Button {
+    public:
+      Button(int button_pin);
+      bool isPressed( void );
+    
+    private:
+      int pin;
+  };
+}
+
 #endif

@@ -16,6 +16,14 @@
 #define PING_ECHO_PIN_L 3
 #define PING_ECHO_PIN_R 4
 
+/* Maze Configuration */
+
+#define MAZE_HEIGHT 10
+#define MAZE_WIDTH 10
+
+#define MAZE_START [0,0]
+#define MAZE_SOLUTION {[4,4], [4,5], [5,4], [5,5]}
+
 /* Speed Configuration 
 Nothing here yet... */
 
@@ -30,7 +38,7 @@ E5 for 0.25 seconds
 G#5 for 0.25 seconds
 B5 for 0.25 seconds
 */
-#define SOUND_STAND_BY { \
+#define SOUND_ON { \
     [330,250], \
     [494,250], \
     [659,250], \
@@ -39,20 +47,10 @@ B5 for 0.25 seconds
 }
 
 /*
-Start Up Sound
-A4 for 0.5 seconds
-E5 for 0.5 seconds
-*/
-#define SOUND_START_UP { \
-    [440,500], \
-    [659,500] \
-}
-
-/*
-Build Map Sound
+Crawl Sound
 B5 for 0.25 seconds
 */
-#define SOUND_BUILD_MAP { \
+#define SOUND_CRAWL { \
     [988,250] \
 }
 

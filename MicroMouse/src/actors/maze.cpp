@@ -1,4 +1,1 @@
-#include "maze.h";
-
-namespace maze {
-}
+#include "maze.h"

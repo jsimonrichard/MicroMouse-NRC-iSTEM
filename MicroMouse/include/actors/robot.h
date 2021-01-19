@@ -1,8 +1,6 @@
 #include "drivers/ping.h"
-#include "actors/autonomous/states/states.h"
 
 using namespace drivers;
-using namespace states;
 
 #ifndef HEADER_ROBOT
 #define HEADER_ROBOT
@@ -20,14 +18,21 @@ struct Position: Movement {
 Position operator+(Position a, Movement b) { return a+=b; }; // Position + Movement = Position
 Movement operator-(Position a, Position b) { return a-=b; }; // Posiiton - Position = Movement
 
-class Mouse {
+enum State {
+    StandBy,
+    Crawl,
+    Homing,
+    Dash
+};
+
+class Robot {
     public:
         void loop();
-        
+
         State get_state() { return state; };
         void set_state(State new_state) { state = new_state; };
 
-        void set_walls(ping::PingData ping_data);
+        void set_walls(PingData ping_data);
 
     private:
         State state;

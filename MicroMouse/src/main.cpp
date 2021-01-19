@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "config.h"
+#include "common.h"
 
 // Drivers
 #include "drivers/motor.h"
@@ -33,12 +34,15 @@ Button button(BUTTON_PIN);
 Buzzer buzzer(BUZZER_PIN);
 
 /* Actors */
-Mouse robot();
+Robot robot();
 Maze maze();
 
 void setup() {
   // Setup Serial
   Serial.begin(9600);
+
+  // Play Sound
+  buzzer.play(SOUND_ON);
 }
 
 void loop() {

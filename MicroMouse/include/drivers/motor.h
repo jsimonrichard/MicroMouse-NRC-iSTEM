@@ -14,7 +14,7 @@ namespace drivers {
     private:
       int pin;
       int speed;
-  }
+  };
 }
 
 #endif

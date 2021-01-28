@@ -20,8 +20,8 @@ class Maze {
     void trim();
     path solve_recursive();
 
-    bool visited[MAZE_WIDTH][MAZE_HEIGHT] = { false };
-    bool wall_open[MAZE_WIDTH][MAZE_HEIGHT][2] = { false }; // [Right, Bottom] for each cell (some values for edge/corner cells are invalid)
+    bool visited[MAZE_WIDTH][MAZE_HEIGHT] = {{ false }};
+    bool wall_open[MAZE_WIDTH][MAZE_HEIGHT][2] = {{{ false }}}; // [Right, Bottom] for each cell (some values for edge/corner cells are invalid)
 };
 
 #endif

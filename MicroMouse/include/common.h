@@ -1,3 +1,5 @@
+#include "config.h"
+
 // Drivers
 #include "drivers/motor.h"
 #include "drivers/ping.h"
@@ -8,14 +10,23 @@
 #include "actors/robot.h"
 #include "actors/maze.h"
 
-/* Drivers */
-extern Motor left_motor;
-extern Motor right_motor;
+/* Driver Initiation*/
+Motor left_motor(MOTOR_L_PIN);
+Motor right_motor(MOTOR_R_PIN);
 
-PingCollection ping_collection;
+PingSensor front_ping_sensor(PING_ECHO_PIN_F);
+PingSensor back_ping_sensor(PING_ECHO_PIN_B);
+PingSensor left_ping_sensor(PING_ECHO_PIN_L);
+PingSensor right_ping_sensor(PING_ECHO_PIN_R);
 
-Button button;
-Buzzer buzzer;
+PingCollection ping_collection(PING_TRIG_PIN,
+  front_ping_sensor,
+  back_ping_sensor,
+  left_ping_sensor,
+  right_ping_sensor);
+
+Button button(BUTTON_PIN);
+Buzzer buzzer(BUZZER_PIN);
 
 /* Actors */
 Robot robot;

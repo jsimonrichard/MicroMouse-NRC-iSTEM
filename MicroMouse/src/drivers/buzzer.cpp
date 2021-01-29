@@ -7,9 +7,13 @@ namespace drivers {
     pinMode(pin, OUTPUT);
   }
 
-  void Buzzer::play(vector<int[2]> sound) {
-      vector<int[2]>::iterator ptr;
-      for (ptr = sound.begin(); ptr < sound.end(); ptr++) 
-        tone(pin, *ptr[0], *ptr[1]); 
+  void Buzzer::play(vector<array<int,2>> song) {
+      for (array<int,2> note : song) {
+        if(note[0] == 0) {
+          delay(note[1]);
+        } else {
+        tone(pin, note[0], note[1]); 
+        }
+      } 
   }
 }

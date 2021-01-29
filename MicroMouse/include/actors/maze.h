@@ -1,4 +1,5 @@
 #include <vector>
+#include <array>
 
 #include "config.h"
 #include "robot.h"
@@ -8,8 +9,6 @@ using namespace std;
 
 #ifndef HEADER_MAZE
 #define HEADER_MAZE
-
-typedef vector<int[2]> path;
 
 class Maze {
   public:

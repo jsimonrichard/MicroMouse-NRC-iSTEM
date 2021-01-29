@@ -1,4 +1,5 @@
 #include <vector>
+#include <array>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ namespace drivers {
   class Buzzer {
     public:
       Buzzer(int pin);
-      void play(vector<int[2]> sound);
+      void play(vector<array<int,2>> sound);
     
     private:
       int pin;

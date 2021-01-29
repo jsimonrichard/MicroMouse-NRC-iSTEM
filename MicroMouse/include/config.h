@@ -38,6 +38,7 @@ Nothing here yet... */
 
 
 /* Sound Configuration */
+typedef vector<array<int,2>> path;
 
 /*
 On Sound
@@ -47,7 +48,7 @@ E5 for 0.25 seconds
 G#5 for 0.25 seconds
 B5 for 0.25 seconds
 */
-const vector<array<int,2>> SOUND_ON {
+const path SOUND_ON {
     {330,250},
     {494,250},
     {659,250},
@@ -59,7 +60,7 @@ const vector<array<int,2>> SOUND_ON {
 Crawl Sound
 B5 for 0.25 seconds
 */
-const vector<array<int,2>> SOUND_CRAWL {
+const path SOUND_CRAWL {
     {988,250}
 };
 
@@ -69,7 +70,7 @@ B5 for 0.25 seconds
 E5 for 0.25 seconds
 B4 for 0.25 seconds
 */
-const vector<array<int,2>> SOUND_HOMING {
+const path SOUND_HOMING {
     {988,250},
     {659,250},
     {494,250} 
@@ -83,7 +84,7 @@ B4 for 0.25 seconds
 Break
 E5 for 0.5 seconds
 */
-const vector<array<int,2>> SOUND_DASH {
+const path SOUND_DASH {
     {494,250},
     {0,2},
     {494,250},

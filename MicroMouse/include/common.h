@@ -10,24 +10,27 @@
 #include "actors/robot.h"
 #include "actors/maze.h"
 
+#ifndef HEADER_COMMON
+#define HEADER_COMMON
+
 /* Driver Initiation*/
-Motor left_motor(MOTOR_L_PIN);
-Motor right_motor(MOTOR_R_PIN);
+Motor *left_motor, *right_motor;
+extern Motor *left_motor, *right_motor;
 
-PingSensor front_ping_sensor(PING_ECHO_PIN_F);
-PingSensor back_ping_sensor(PING_ECHO_PIN_B);
-PingSensor left_ping_sensor(PING_ECHO_PIN_L);
-PingSensor right_ping_sensor(PING_ECHO_PIN_R);
+PingSensor *front_ping_sensor, *back_ping_sensor, *left_ping_sensor, *right_ping_sensor;
+extern PingSensor *front_ping_sensor, *back_ping_sensor, *left_ping_sensor, *right_ping_sensor;
+PingCollection *ping_collection;
+extern PingCollection *ping_collection;
 
-PingCollection ping_collection(PING_TRIG_PIN,
-  front_ping_sensor,
-  back_ping_sensor,
-  left_ping_sensor,
-  right_ping_sensor);
-
-Button button(BUTTON_PIN);
-Buzzer buzzer(BUZZER_PIN);
+Button* button;
+extern Button* button;
+Buzzer* buzzer;
+extern Buzzer* buzzer;
 
 /* Actors */
-Robot robot;
-Maze maze;
+Robot* robot;
+extern Robot* robot;
+Maze* maze;
+extern Maze* maze;
+
+#endif

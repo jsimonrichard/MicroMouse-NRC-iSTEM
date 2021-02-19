@@ -3,9 +3,9 @@
 #include "actors/robot.h"
 
 void standByLoop() {
-    if(button.isPressed()) {
-        buzzer.play(SOUND_CRAWL);
-        robot.set_state(Crawl);
+    if(button->isPressed()) {
+        buzzer->play(SOUND_CRAWL);
+        robot->set_state(Crawl);
     }
 }
 

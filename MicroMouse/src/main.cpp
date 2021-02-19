@@ -19,10 +19,10 @@ void setup() {
   Serial.begin(9600);
 
   // Play Sound
-  buzzer.play(SOUND_ON);
+  buzzer->play(SOUND_ON);
 }
 
 void loop() {
-  robot.loop();
+  robot->loop();
   delay(10);
 }

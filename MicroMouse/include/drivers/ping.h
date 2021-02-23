@@ -10,13 +10,8 @@ namespace drivers {
     double left;
     double right;
 
-    PingData operator+(PingData a) {
-      return {time-a.time, front+a.front, back+a.back, left+a.left, right+a.right};
-    }
-
-    PingData operator-(PingData a) {
-      return {time-a.time, front-a.front, back-a.back, left-a.left, right-a.right};
-    }
+    PingData operator+(PingData a);
+    PingData operator-(PingData a); 
   };
 
   class PingSensor {
@@ -31,21 +26,21 @@ namespace drivers {
   class PingCollection {
     public:
       PingCollection(
-        int trig_pin,
-        PingSensor front_sensor,
-        PingSensor back_sensor,
-        PingSensor left_sensor,
-        PingSensor right_sensor);
+        int t_pin,
+        PingSensor *f_sensor,
+        PingSensor *b_sensor,
+        PingSensor *l_sensor,
+        PingSensor *r_sensor);
       
       PingData ping();
     
     private:
       int trig_pin;
 
-      PingSensor front_sensor;
-      PingSensor back_sensor;
-      PingSensor left_sensor;
-      PingSensor right_sensor;
+      PingSensor *front_sensor;
+      PingSensor *back_sensor;
+      PingSensor *left_sensor;
+      PingSensor *right_sensor;
   };
 }
 

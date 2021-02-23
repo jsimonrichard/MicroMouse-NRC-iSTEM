@@ -10,13 +10,13 @@ struct Movement {
     int j;
 };
 
-struct Position: Movement {
-    struct Position& operator+=(const Movement& rhs) { i += rhs.i; j += rhs.j; return *this; }
-    struct Movement& operator-=(const Position& rhs) { i -= rhs.i; j -= rhs.j; return *this; }
+struct Position {
+    int i;
+    int j;
+    Position operator+(Movement a); // Position + Movement = Position
+    Movement operator-(Position a); // Posiiton - Position = Movement
 };
 
-Position operator+(Position a, Movement b) { return a+=b; }; // Position + Movement = Position
-Movement operator-(Position a, Position b) { return a-=b; }; // Posiiton - Position = Movement
 
 enum State {
     StandBy,

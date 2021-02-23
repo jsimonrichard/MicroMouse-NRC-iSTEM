@@ -2,6 +2,10 @@
 #include "common.h"
 #include "actors/robot.h"
 
+Position Position::operator+(Movement a) {
+    return {i+a.i, j+a.j};
+}
+
 void standByLoop() {
     if(button->isPressed()) {
         buzzer->play(SOUND_CRAWL);

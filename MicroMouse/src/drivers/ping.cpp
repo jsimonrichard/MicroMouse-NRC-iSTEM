@@ -2,6 +2,15 @@
 #include "drivers/ping.h"
 
 namespace drivers {
+
+  PingData PingData::operator+(PingData a) {
+    return {time-a.time, front+a.front, back+a.back, left+a.left, right+a.right};
+  }
+
+  PingData PingData::operator-(PingData a) {
+    return {time-a.time, front-a.front, back-a.back, left-a.left, right-a.right};
+  }
+
   /* PingSensor Class */
   PingSensor::PingSensor(int e_pin) {
     echo_pin = e_pin;
@@ -15,17 +24,10 @@ namespace drivers {
   /* PingCollection Class */
   PingCollection::PingCollection(
     int t_pin,
-    PingSensor f_sensor,
-    PingSensor b_sensor,
-    PingSensor l_sensor,
-    PingSensor r_sensor) {
+    PingSensor *f_sensor, PingSensor *b_sensor, PingSensor *l_sensor, PingSensor *r_sensor):
+    front_sensor(f_sensor), back_sensor(b_sensor), left_sensor(l_sensor), right_sensor(r_sensor) {
       trig_pin = t_pin;
       pinMode(trig_pin, OUTPUT);
-
-      front_sensor = f_sensor;
-      back_sensor = b_sensor;
-      left_sensor = l_sensor;
-      right_sensor = r_sensor;
   }
 
   PingData PingCollection::ping() {
@@ -39,10 +41,10 @@ namespace drivers {
       PingData output;
       output.time = millis();
 
-      output.front = front_sensor.read();
-      output.back = back_sensor.read();
-      output.left = left_sensor.read();
-      output.right = right_sensor.read();
+      output.front = front_sensor->read();
+      output.back = back_sensor->read();
+      output.left = left_sensor->read();
+      output.right = right_sensor->read();
 
       return output;
   }

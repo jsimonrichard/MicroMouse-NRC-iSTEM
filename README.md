@@ -1,7 +1,6 @@
-# The code base for iSTEM's NRC Micro Mouse robot
+# NRC Micro Mouse Robot (WIP)
+### iSTEM Geauga ECHS - Simon Richard and Alex Schreoder
 
-This code base was written in C++, using PlatformIO to compile and load the code onto the robot's microcontroller, a Teensy 4.0.
+This is the code base for iSTEM's Micro Mouse robot for NRC 2021. It is being written in MicroPython for the Raspberry Pi Pico micro controller. We initially wrote this in C++ for the Teensy 4.0, but we recently decided to switch over to the RPi Pico.
 
-Please note that this code base and the robot itself is WIP. The robot, which is sponsored by iSTEM Geauga Early College High School, should look something like this:
-
-![robot](https://i.ibb.co/k1JvrR8/robot.png)
+**TODO:** Add schematic.

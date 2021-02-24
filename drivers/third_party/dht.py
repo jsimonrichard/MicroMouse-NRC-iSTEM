@@ -1,3 +1,5 @@
+# From: https://github.com/ikornaselur/pico-dht11/blob/master/dht.py
+
 import array
 
 import micropython

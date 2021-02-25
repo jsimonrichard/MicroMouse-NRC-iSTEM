@@ -2,6 +2,11 @@
 Entrypoint for the project
 """
 
+# Light
+from machine import Pin, Timer
+led = Pin(25, Pin.OUT)
+led.high()
+
 # DRIVER INITIALIZATION
 
 from config.pins import BUTTON_PIN, BUZZER_PIN, MOTOR_PINS, PING_PINS

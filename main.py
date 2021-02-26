@@ -3,7 +3,7 @@ Entrypoint for the project
 """
 
 # Light
-from machine import Pin, Timer
+from machine import Pin
 led = Pin(25, Pin.OUT)
 led.high()
 

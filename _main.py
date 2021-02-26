@@ -4,6 +4,7 @@ Entrypoint for the project
 # Imports
 
 from machine import Pin
+import utime
 
 from config.pins import BUTTON_PIN, BUZZER_PIN, MOTOR_PINS, PING_PINS
 from config.maze import UNIT_SIZE, MAZE_SIZE, SOLUTIONS
@@ -23,10 +24,10 @@ bzz = buzzer.Buzzer(BUZZER_PIN)
 motors = motor.Motor(MOTOR_PINS)
 
 ping_sensors = {
-    "front": ping.PingSensor( PING_PINS["ECHO"]["FRONT"] ),
-    "back": ping.PingSensor( PING_PINS["ECHO"]["BACK"] ),
-    "right": ping.PingSensor( PING_PINS["ECHO"]["RIGHT"] ),
-    "left": ping.PingSensor( PING_PINS["ECHO"]["LEFT"] )
+    "front": ping.PingSensor( PING_PINS["echo"]["front"] ),
+    "back": ping.PingSensor( PING_PINS["echo"]["back"] ),
+    "right": ping.PingSensor( PING_PINS["echo"]["right"] ),
+    "left": ping.PingSensor( PING_PINS["echo"]["left"] )
 }
 ping_collection = ping.PingCollection(PING_PINS["trig"], ping_sensors)
 
@@ -43,6 +44,8 @@ robot = Robot(
     ping_collection,
     maze
 )
+
 robot.Start()
 
+utime.sleep_ms(200)
 led.low()

@@ -1,17 +1,21 @@
 """
 Entrypoint for the project
 """
+# Imports
 
-# Light
 from machine import Pin
+
+from config.pins import BUTTON_PIN, BUZZER_PIN, MOTOR_PINS, PING_PINS
+from config.maze import UNIT_SIZE, MAZE_SIZE, SOLUTIONS
+from drivers import button, buzzer, motor, ping
+from maze import Maze
+from robot import Robot
+
+# Turn on Light
 led = Pin(25, Pin.OUT)
 led.high()
 
 # DRIVER INITIALIZATION
-
-from config.pins import BUTTON_PIN, BUZZER_PIN, MOTOR_PINS, PING_PINS
-from drivers import button, buzzer, motor, ping
-
 btn = button.Button(BUTTON_PIN)
 bzz = buzzer.Buzzer(BUZZER_PIN)
 
@@ -28,15 +32,10 @@ ping_collection = ping.PingCollection(PING_PINS["trig"], ping_sensors)
 
 
 # MAZE INITIALIZATION
-
-from config.maze import UNIT_SIZE, MAZE_SIZE, SOLUTIONS
-from maze import Maze
-
 maze = Maze(UNIT_SIZE, MAZE_SIZE, SOLUTIONS)
 
 
 # ROBOT INITIALIZATION
-from robot import Robot
 robot = Robot(
     btn,
     bzz,
@@ -44,5 +43,6 @@ robot = Robot(
     ping_collection,
     maze
 )
-
 robot.Start()
+
+led.low()

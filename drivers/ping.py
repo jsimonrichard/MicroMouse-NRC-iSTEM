@@ -9,6 +9,7 @@ class PingSensor:
     async def ping(self):
         """
         Make the sensor ping and get a distance (in cm) asyncronously
+        TODO: Check this
         """
         # Send a pulse
         self.trig.off() # Make sure it's off
@@ -18,12 +19,12 @@ class PingSensor:
         sleep_us(10) # Pulse length
         self.trig.off()
 
-        # Wait for silence
+        # Wait for beginning of ping
         while self.echo.value() == 0:
             ...
         start_time = ticks_us() # Start time
 
-        # Wait for beginning of ping
+        # Wait for end of ping
         while self.echo.value() == 1:
             ...
         end_time = ticks_us() # End time

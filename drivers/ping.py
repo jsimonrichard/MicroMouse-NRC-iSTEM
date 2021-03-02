@@ -1,11 +1,42 @@
+from machine import Pin
+from utime import ticks_us, sleep_us
+
 class PingSensor:
-    def __init__(self, echo_pin):
-        self.echo_pin = echo_pin
+    def __init__(self, pins):
+        self.echo = Pin(pins["echo"], Pin.IN)
+        self.trig = Pin(pins["trig"], Pin.OUT)
+
+    async def ping(self):
+        """
+        Make the sensor ping and get a distance (in cm) asyncronously
+        """
+        # Send a pulse
+        self.trig.off() # Make sure it's off
+        sleep_us(2)
+
+        self.trig.on()
+        sleep_us(10) # Pulse length
+        self.trig.off()
+
+        # Wait for silence
+        while self.echo.value() == 0:
+            ...
+        start_time = ticks_us() # Start time
+
+        # Wait for beginning of ping
+        while self.echo.value() == 1:
+            ...
+        end_time = ticks_us() # End time
+
+        distance = (end_time - start_time)/58 # in cm
+        return distance
 
 class PingCollection:
-    def __init__(self, trig_pin, sensors):
-        self.trig_pin = trig_pin
+    def __init__(self, sensors):
         self.sensors = sensors
-    
-    def ping(self):
-        ...
+
+    async def ping(self):
+        out = {}
+        for key in self.sensors:
+            out[key] = await self.sensors[key].ping()
+        return out

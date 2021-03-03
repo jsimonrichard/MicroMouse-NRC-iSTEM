@@ -18,7 +18,7 @@ led.high()
 
 # DRIVER INITIALIZATION
 btn = button.Button(BUTTON_PIN)
-bzz = buzzer.Buzzer(BUZZER_PIN)
+bzz = buzzer.Buzzer(BUZZER_PIN, 1)
 
 # Update this
 motors = motor.Motor(MOTOR_PINS)

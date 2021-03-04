@@ -18,21 +18,24 @@ MOTOR_PINS = {
     }
 }
 
-PING_PINS = {
-    "front": {
-        "trig": 12,
-        "echo": 13
-    },
-    "back": {
-        "trig": 16,
-        "echo": 17
-    },
-    "left": {
+PING_PINS = [
+    { # Left
         "trig": 14,
         "echo": 15
     },
-    "right": {
+    
+    { # Front
+        "trig": 12,
+        "echo": 13
+    },
+    
+    { # Right
         "trig": 18,
         "echo": 19
+    },
+
+    { # Back
+        "trig": 16,
+        "echo": 17
     }
-}
+]

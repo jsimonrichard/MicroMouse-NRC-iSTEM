@@ -23,14 +23,8 @@ bzz = buzzer.Buzzer(BUZZER_PIN, 1)
 # Update this
 motors = motor.Motor(MOTOR_PINS)
 
-ping_sensors = {
-    "front": ping.PingSensor( PING_PINS["echo"]["front"] ),
-    "back": ping.PingSensor( PING_PINS["echo"]["back"] ),
-    "right": ping.PingSensor( PING_PINS["echo"]["right"] ),
-    "left": ping.PingSensor( PING_PINS["echo"]["left"] )
-}
-ping_collection = ping.PingCollection(PING_PINS["trig"], ping_sensors)
-
+ping_sensors = map(lambda pins: ping.PingSensor(pins), PING_PINS)
+ping_collection = ping.PingCollection(ping_sensors)
 
 # MAZE INITIALIZATION
 maze = Maze(UNIT_SIZE, MAZE_SIZE, SOLUTIONS)

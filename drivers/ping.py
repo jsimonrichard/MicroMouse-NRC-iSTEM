@@ -37,7 +37,7 @@ class PingCollection:
         self.sensors = sensors
 
     async def ping(self):
-        out = {}
-        for key in self.sensors:
-            out[key] = await self.sensors[key].ping()
+        out = []
+        for sensor in self.sensors:
+            out.append( await sensor.ping() )
         return out

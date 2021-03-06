@@ -46,26 +46,6 @@ class Maze:
 
         return (pi, nj, ni, pj)
 
-    def _gen_4d_graph(self):
-        '''
-        Probably won't use this
-        '''
-        maze = np.ndarray((*self._maze_size, *self._maze_size))
-
-        for i in range(self._maze_size[0]):
-            for j in range(self._maze_size[1]):
-                if i > 0:
-                    maze[i,j,i-1,j] = not self._v_walls[i-1, j]
-                elif i < self._maze_size[0]-1:
-                    maze[i,j,i+1,j] = not self._v_walls[i, j]
-
-                if j > 0:
-                    maze[i,j,i,j-1] = not self._h_walls[i, j-1]
-                elif j < self._maze_size[1]-1:
-                    maze[i,j,i,j+1] = not self._h_walls[i, j]
-
-        return maze
-    
     def path(self, start_pos, targets):
         def _solve(start_pos, targets):
             if start_pos in targets:

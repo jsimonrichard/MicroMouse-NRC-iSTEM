@@ -47,23 +47,23 @@ class Maze:
         return (pi, nj, ni, pj)
 
     def path(self, start_pos, targets):
-        def _solve(start_pos, targets):
-            if start_pos in targets:
-                yield [start_pos]
+        def _solve(pos, targets):
+            if pos in targets:
+                yield [pos]
             else:
-                i,j = start_pos
+                i,j = pos
 
                 if i > 0 and not self._v_walls[i-1,j]:
-                    yield [start_pos]+next(_solve((i-1, j), targets))
+                    yield [pos]+next(_solve((i-1, j), targets))
 
                 if i < self._maze_size[0]-1 and not self._v_walls[i,j]:
-                    yield [start_pos]+next(_solve((i+1,j), targets))
+                    yield [pos]+next(_solve((i+1,j), targets))
 
                 if j > 0 and not self._h_walls[i,j-1]:
-                    yield [start_pos]+next(_solve((i,j-1), targets))
+                    yield [pos]+next(_solve((i,j-1), targets))
 
                 if j < self._maze_size[1]-1 and not self._h_walls[i,j]:
-                    yield [start_pos]+next(_solve((i,j+1), targets))
+                    yield [pos]+next(_solve((i,j+1), targets))
 
         return next(_solve(start_pos, targets))
 

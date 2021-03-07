@@ -1,4 +1,7 @@
-from ulab import numpy as np # pylint: disable=import-error
+try:
+    from ulab import numpy as np # pylint: disable=import-error
+except ImportError:
+    import numpy as np
 
 class Maze:
     def __init__(self, unit_size, maze_size, solution_units):
@@ -9,6 +12,16 @@ class Maze:
         self._h_walls = np.ones((self._maze_size[0], self._maze_size[1]-1), dtype=bool)
         self._v_walls = np.ones((self._maze_size[0]-1, self._maze_size[1]), dtype=bool)
         self._visited = np.zeros(self._maze_size, dtype=bool)
+
+    def __str__(self):
+        out = "*" + "--*"*self._maze_size[0] + "\n"
+        for j in range(self._maze_size[1]-1):
+            out += "|  " + "  ".join([ "|" if self._v_walls[i][j] else " " for i in range(self._maze_size[0]-1) ]) + "  |\n"
+            out += "*" + "*".join([ "--" if self._h_walls[i][j] else "  " for i in range(self._maze_size[0]) ]) + "*\n"
+
+        out += "|  " + "  ".join([ "|" if self._v_walls[i][ self._maze_size[1]-1 ] else " " for i in range(self._maze_size[0]-1) ]) + "  |\n"
+        out += "*" + "--*"*self._maze_size[0] + "\n"
+        return out
 
     def _parse_ping(self, distances, orientation):
         ...

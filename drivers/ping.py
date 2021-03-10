@@ -6,7 +6,7 @@ class PingSensor:
         self.echo = Pin(pins["echo"], Pin.IN)
         self.trig = Pin(pins["trig"], Pin.OUT)
 
-    async def ping(self):
+    def ping(self):
         """
         Make the sensor ping and get a distance (in cm) asyncronously
         TODO: Check this
@@ -36,8 +36,8 @@ class PingCollection:
     def __init__(self, sensors):
         self.sensors = sensors
 
-    async def ping(self):
+    def ping(self):
         out = []
         for sensor in self.sensors:
-            out.append( await sensor.ping() )
+            out.append( sensor.ping() )
         return out

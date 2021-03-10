@@ -23,12 +23,12 @@ PING_PINS = [
         "trig": 14,
         "echo": 15
     },
-    
+
     { # Front
         "trig": 12,
         "echo": 13
     },
-    
+
     { # Right
         "trig": 18,
         "echo": 19

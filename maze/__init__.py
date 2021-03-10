@@ -1,17 +1,24 @@
-try:
-    from ulab import numpy as np # pylint: disable=import-error
-except ImportError:
-    import numpy as np
+def array2d(size, init_value=0):
+    return [[init_value for j in range(size[1])] for i in range(size[0])]
 
 class Maze:
-    def __init__(self, unit_size, maze_size, solution_units):
-        self._unit_size = unit_size
+    def __init__(self, maze_size):
         self._maze_size = maze_size
-        self.targets = solution_units
 
-        self._h_walls = np.ones((self._maze_size[0], self._maze_size[1]-1), dtype=bool)
-        self._v_walls = np.ones((self._maze_size[0]-1, self._maze_size[1]), dtype=bool)
-        self._visited = np.zeros(self._maze_size, dtype=bool)
+        self._h_walls = array2d((self._maze_size[0], self._maze_size[1]-1), init_value=True)
+        self._v_walls = array2d((self._maze_size[0]-1, self._maze_size[1]), init_value=True)
+        self._visited = array2d(self._maze_size, init_value=False)
+
+    def makeRandom(self):
+        from random import choice
+
+        for i in range(self._maze_size[0]):
+            for j in range(self._maze_size[1]-1):
+                self._h_walls[i][j] = choice([True,False])
+
+        for i in range(self._maze_size[0]-1):
+            for j in range(self._maze_size[1]):
+                self._v_walls[i][j] = choice([True,False])
 
     def __str__(self):
         out = "*" + "--*"*self._maze_size[0] + "\n"
@@ -26,59 +33,84 @@ class Maze:
     def _parse_ping(self, distances, orientation):
         ...
 
-    def _get_expected(self, pos):
+    def getExpected(self, pos):
         """
         Returns the expected number units to the first walls in all directions
         """
-        if not self._visited[pos]:
-            return False
 
         ni = pos[0]
-        for i in reversed(range(pos[0]-1)):
-            if self._v_walls[i, pos[1]]:
-                ni = pos[0] - i
+        for i in reversed(range(pos[0])):
+            if self._v_walls[i][pos[1]]:
+                ni = pos[0] - i - 1
                 break
 
-        pi = self._maze_size[0] - pos[0]
+        pi = self._maze_size[0]-1 - pos[0]
         for i in range(pos[0], self._maze_size[0]-1):
-            if self._v_walls[i, pos[1]]:
+            if self._v_walls[i][pos[1]]:
                 pi = i - pos[0]
                 break
 
         nj = pos[1]
-        for j in reversed(range(pos[1]-1)):
-            if self._h_walls[pos[0], j]:
-                nj = pos[1] - j
+        for j in reversed(range(pos[1])):
+            if self._h_walls[pos[0]][j]:
+                nj = pos[1] - j - 1
                 break
 
-        pj = self._maze_size[1] - pos[1]
+        pj = self._maze_size[1]-1 - pos[1]
         for j in range(pos[1], self._maze_size[1]-1):
-            if self._h_walls[pos[0], j]:
+            if self._h_walls[pos[0]][j]:
                 pj = j - pos[1]
                 break
 
         return (pi, nj, ni, pj)
 
-    def path(self, start_pos, targets):
-        def _solve(pos, targets):
-            if pos in targets:
-                yield [pos]
+    def _solve(self, start_pos, targets=[]):
+        parents = {start_pos: None}
+        queue = [start_pos]
+
+        # Loop until the queue is empty or the target is found
+        solved = False
+        end = ()
+        while queue:
+            i,j = queue.pop(0)
+
+            if (i,j) in targets:
+                end = (i,j)
+                solved = True
+                break
+
+            # Check cardinal directions
+            if i > 0 and not self._v_walls[i-1][j] and (i-1,j) not in parents:
+                queue.append((i-1,j))
+                parents[(i-1,j)] = (i,j)
+
+            if i < self._maze_size[0]-1 and not self._v_walls[i][j] and (i+1,j) not in parents:
+                queue.append((i+1,j))
+                parents[(i+1,j)] = (i,j)
+
+            if j > 0 and not self._h_walls[i][j-1] and (i,j-1) not in parents:
+                queue.append((i,j-1))
+                parents[(i,j-1)] = (i,j)
+
+            if j < self._maze_size[1]-1 and not self._h_walls[i][j] and (i,j+1) not in parents:
+                queue.append((i,j+1))
+                parents[(i,j+1)] = (i,j)
+
+        if targets:
+            if not solved:
+                raise Exception("Path could not be solved")
             else:
-                i,j = pos
+                return (parents, end)
+        else:
+            return parents
 
-                if i > 0 and not self._v_walls[i-1,j]:
-                    yield [pos]+next(_solve((i-1, j), targets))
+    def solvePath(self, start_pos, targets):
+        parents, end = self._solve(start_pos, targets=targets)
 
-                if i < self._maze_size[0]-1 and not self._v_walls[i,j]:
-                    yield [pos]+next(_solve((i+1,j), targets))
+        path = []
+        pos = end
+        while pos:
+            path.append(pos)
+            pos = parents[pos]
 
-                if j > 0 and not self._h_walls[i,j-1]:
-                    yield [pos]+next(_solve((i,j-1), targets))
-
-                if j < self._maze_size[1]-1 and not self._h_walls[i,j]:
-                    yield [pos]+next(_solve((i,j+1), targets))
-
-        return next(_solve(start_pos, targets))
-
-    def solve_maze(self, pos):
-        return self.path(pos, self.targets)
+        return path

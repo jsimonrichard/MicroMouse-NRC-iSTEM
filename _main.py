@@ -21,9 +21,9 @@ btn = button.Button(BUTTON_PIN)
 bzz = buzzer.Buzzer(BUZZER_PIN, 1)
 
 # Update this
-motors = motor.Motor(MOTOR_PINS)
+motors = motor.TwoWheel(MOTOR_PINS)
 
-ping_sensors = map(lambda pins: ping.PingSensor(pins), PING_PINS)
+ping_sensors = map(ping.PingSensor, PING_PINS)
 ping_collection = ping.PingCollection(ping_sensors)
 
 # MAZE INITIALIZATION
@@ -43,3 +43,5 @@ robot.Start()
 
 utime.sleep_ms(200)
 led.low()
+
+print(maze)

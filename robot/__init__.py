@@ -1,10 +1,10 @@
-import uasyncio
+import utime
 
 class Direction:
-    UP = (1,0)
-    DOWN = (-1,0)
-    LEFT = (0,-1)
-    RIGHT = (0,1)
+    UP = 1
+    DOWN = 3
+    LEFT = 0
+    RIGHT = 2
 
 class Robot:
     def __init__(self, btn, bzz, motors, ping_collection, maze):
@@ -17,13 +17,22 @@ class Robot:
         self.pos = (0,0)
         self.orientation = Direction.UP
 
-        self._ping = {}
-        self._del_ping = {}
+        self.no_peripherals = False
 
-    def Start(self):
-        uasyncio.create_task(self._update_ping())
+        self._ping = []
+        #self._del_ping = []
 
-    async def _update_ping(self):
-        ping = await self._ping_collection.ping()
-        self._del_ping = ping - self._ping
+    def Start(self, no_peripherals=False):
+        self.no_peripherals = no_peripherals
+        self._loop()
+
+    def _loop(self):
+        while True:
+            self._update_ping()
+            print(self._ping)
+            utime.sleep_ms(1000)
+
+    def _update_ping(self):
+        ping = [] if self.no_peripherals else self._ping_collection.ping()
+        #self._del_ping = ping - self._ping
         self._ping = ping

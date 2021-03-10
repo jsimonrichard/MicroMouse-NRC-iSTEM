@@ -12,6 +12,9 @@ from drivers import button, buzzer, motor, ping
 from maze import Maze
 from robot import Robot
 
+print("[PICO] Imported Libraries")
+
+print("Initializing...")
 # Turn on Light
 led = Pin(25, Pin.OUT)
 led.high()
@@ -27,7 +30,7 @@ ping_sensors = map(ping.PingSensor, PING_PINS)
 ping_collection = ping.PingCollection(ping_sensors)
 
 # MAZE INITIALIZATION
-maze = Maze(UNIT_SIZE, MAZE_SIZE, SOLUTIONS)
+maze = Maze(MAZE_SIZE)
 
 
 # ROBOT INITIALIZATION
@@ -39,9 +42,9 @@ robot = Robot(
     maze
 )
 
-robot.Start()
-
-utime.sleep_ms(200)
+utime.sleep_ms(100)
 led.low()
+print("[PICO] Initialized")
 
-print(maze)
+robot.Start(no_peripherals=True)
+

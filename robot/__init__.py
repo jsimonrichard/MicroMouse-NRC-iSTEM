@@ -1,7 +1,6 @@
-from enum import Enum
 import uasyncio
 
-class Direction(Enum):
+class Direction:
     UP = (1,0)
     DOWN = (-1,0)
     LEFT = (0,-1)

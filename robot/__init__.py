@@ -20,7 +20,7 @@ class Robot:
         self.no_peripherals = False
 
         self._ping = []
-        #self._del_ping = []
+        self._del_ping = []
 
     def Start(self, no_peripherals=False):
         self.no_peripherals = no_peripherals
@@ -34,5 +34,5 @@ class Robot:
 
     def _update_ping(self):
         ping = [] if self.no_peripherals else self._ping_collection.ping()
-        #self._del_ping = ping - self._ping
+        self._del_ping = [b - a for a,b in zip(self._ping, ping)]
         self._ping = ping

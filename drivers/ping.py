@@ -9,7 +9,6 @@ class PingSensor:
     def ping(self):
         """
         Make the sensor ping and get a distance (in cm) asyncronously
-        TODO: Check this
         """
         # Send a pulse
         self.trig.off() # Make sure it's off

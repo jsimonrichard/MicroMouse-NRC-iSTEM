@@ -43,7 +43,8 @@ robot = Robot(
     ping_collection,
     dht_sensor,
     maze,
-    UNIT_SIZE
+    UNIT_SIZE,
+    SOLUTIONS
 )
 
 utime.sleep_ms(100)

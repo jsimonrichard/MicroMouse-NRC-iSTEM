@@ -15,33 +15,33 @@ class State:
 
 
 class Robot:
-    def __init__(self, btn, bzz, motors, ping_collection, maze):
+    def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE):
         self._btn = btn
         self._bzz = bzz
         self._motors = motors
         self._ping_collection = ping_collection
+        self._dht_sensor = dht_sensor
         self._maze = maze
+        self.UNIT_SIZE = UNIT_SIZE
 
         self.step_up_factor = 5
 
         self.pos = (0,0)
         self.orientation = Direction.UP
 
-        self.no_peripherals = False
-
         self.state = None
 
         self._ping = []
         self._del_ping = []
+        self._last_unit_ping = []
 
-    def Start(self, no_peripherals=False):
-        self.no_peripherals = no_peripherals
+    def Start(self):
 
         # Play on sound
         self._bzz.play(songs.ON)
 
         # Wait to start until button is pressed
-        while self._btn.low():
+        while not self._btn.isPressed:
             ...
 
         self._start_crawl()
@@ -52,7 +52,9 @@ class Robot:
         while True:
             # Update ping values
             self._update_ping()
-            print(self._ping)
+            self._update_pos()
+            print(self.pos)
+            #print(self._dht_sensor.temperature)
             utime.sleep_ms(1000)
 
             # Run logic for the current state
@@ -93,6 +95,25 @@ class Robot:
         ...
 
     def _update_ping(self):
-        ping = [] if self.no_peripherals else self._ping_collection.ping()
+        ping = self._ping_collection.ping()
         self._del_ping = [b - a for a,b in zip(self._ping, ping)]
         self._ping = ping
+
+        if self._last_unit_ping == []:
+            self._last_unit_ping = ping
+
+    def _update_pos(self):
+        delta = [b - a for a,b in zip(self._ping, self._last_unit_ping)]
+        dx = (delta[ self.orientation ]-delta[ (self.orientation+2)%4 ])/2
+        dy = (delta[ (self.orientation+1)%4 ]-delta[ (self.orientation+3)%4 ])/2
+        di = int( dx/self.UNIT_SIZE[0] )
+        dj = int( dy/self.UNIT_SIZE[1] )
+        if di or dj:
+            self.pos = (self.pos[0]+di, self.pos[1]+dj)
+            self._last_unit_ping = self._ping
+
+    def _rot_orientation_cw(self):
+        self.orientation = (self.orientation-1) % 4
+
+    def _rot_orientation_ccw(self):
+        self.orientation = (self.orientation+1) % 4

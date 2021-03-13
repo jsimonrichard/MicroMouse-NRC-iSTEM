@@ -1,6 +1,8 @@
 import utime
 from config import songs
 
+from .movement import enrout
+
 class Direction:
     UP = 1
     DOWN = 3
@@ -15,7 +17,7 @@ class State:
 
 
 class Robot:
-    def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE):
+    def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE, SOLUTIONS):
         self._btn = btn
         self._bzz = bzz
         self._motors = motors
@@ -23,6 +25,7 @@ class Robot:
         self._dht_sensor = dht_sensor
         self._maze = maze
         self.UNIT_SIZE = UNIT_SIZE
+        self.SOLUTIONS = SOLUTIONS
 
         self.step_up_factor = 5
 
@@ -30,6 +33,10 @@ class Robot:
         self.orientation = Direction.UP
 
         self.state = None
+        self.enroute = False
+        self.enroute_path = []
+
+        self.speed = 5
 
         self._ping = []
         self._del_ping = []
@@ -58,21 +65,40 @@ class Robot:
             utime.sleep_ms(1000)
 
             # Run logic for the current state
-            if self.state == State.CRAWL:
-                self._crawl()
-            elif self.state == State.HOMING:
-                self._homing()
-            elif self.state == State.DASH:
-                self._dash()
-            elif self.state == State.DASH_BACK:
-                self._homing(step_up=self.step_up_factor)
+            if self.enroute:
+                enroute(self)
+            else:
+                if self.state == State.CRAWL:
+                    self._crawl()
+                elif self.state == State.HOMING:
+                    self._homing()
+                elif self.state == State.DASH:
+                    self._dash()
+                elif self.state == State.DASH_BACK:
+                    self._homing(step_up=self.step_up_factor)
 
     def _start_crawl(self):
         self.state = State.CRAWL
         self._bzz.play(songs.CRAWL)
 
     def _crawl(self):
-        ...
+        self._maze.setVisited(self.pos)
+
+        went = False
+        for k in range(4):
+            if self._ping[k] > self.UNIT_SIZE[(self.orientation+k)%2]:
+                self._motors.go(k)
+                went = True
+
+        if not went:
+            targets = self._maze.getUnvisited()
+
+            if not targets:
+                self._start_homing()
+                targets = [(0,0)]
+
+            self.enroute = True
+            self.enroute_path = self._maze.solvePath(self.pos, targets)
 
     def _start_homing(self):
         self.state = State.HOMING
@@ -82,17 +108,16 @@ class Robot:
         self.state = State.DASH_BACK
 
     def _homing(self, step_up=0):
-        ...
+        self._start_dash()
 
     def _start_dash(self):
         self.state = State.DASH
         self._bzz.play(songs.DASH)
 
     def _dash(self):
-        ...
-
-    def _execute_path(self, path):
-        ...
+        self.speed += self.step_up_factor
+        self.enroute_path = self._maze.solvePath(self.pos, self.SOLUTIONS)
+        self.enroute = True
 
     def _update_ping(self):
         ping = self._ping_collection.ping()

@@ -103,9 +103,20 @@ class Robot:
             self._last_unit_ping = ping
 
     def _update_pos(self):
+        # Get change in position
         delta = [b - a for a,b in zip(self._ping, self._last_unit_ping)]
-        dx = (delta[ self.orientation ]-delta[ (self.orientation+2)%4 ])/2
-        dy = (delta[ (self.orientation+1)%4 ]-delta[ (self.orientation+3)%4 ])/2
+
+        dx = 0
+        dy = 0
+        # Only consider changes in direction of movement
+        if self.orientation%2 == 0:
+            c = 1 if self.orientation==0 else -1
+            dx = c * (delta[2]-delta[0])/2
+        else:
+            c = 1 if self.orientation==3 else -1
+            dy = c * (delta[2]-delta[0])/2
+
+        # Get di, dj
         di = int( dx/self.UNIT_SIZE[0] )
         dj = int( dy/self.UNIT_SIZE[1] )
         if di or dj:

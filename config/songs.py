@@ -22,14 +22,14 @@ HOMING = [
 
 DASH = [
     (494,250), # B4 for 0.25 seconds
-    (0,2),     # Break
+    (0,50),     # Break
     (494,250), # B4 for 0.25 seconds
-    (0,2),     # Break
+    (0,50),     # Break
     (659,500)  # E5 for 0.5 seconds
 ]
 
 WIN = [
     (659,250), # E5 for 0.25 seconds
-    (0,2), # Break
+    (0,50), # Break
     (659,250) 
 ]

@@ -4,7 +4,7 @@ from utime import sleep_ms
 class Buzzer:
     def __init__(self, pin, volume):
         self._buzzer = PWM(Pin(pin))
-        self._duty_level = volume*1000
+        self._duty_level = volume*64000
 
     def _play_sound(self, freq, ms):
         if freq:

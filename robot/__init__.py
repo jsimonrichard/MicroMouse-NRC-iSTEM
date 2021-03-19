@@ -1,7 +1,7 @@
 import utime
 from config import songs
 
-from .movement import enrout
+from .movement import enroute
 
 class Direction:
     UP = 1

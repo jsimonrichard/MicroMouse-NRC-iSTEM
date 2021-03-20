@@ -25,10 +25,11 @@ class PingSensor:
 
         # Wait for end of ping
         while self.echo.value() == 1:
-            ...
-        end_time = ticks_us() # End time
+            dur = ticks_us() - start_time
+            if dur > 20000:
+                break
 
-        distance = (end_time - start_time)/58 # in cm
+        distance = dur/58 # in cm
         return distance
 
 class PingCollection:

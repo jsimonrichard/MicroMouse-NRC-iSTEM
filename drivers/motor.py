@@ -14,6 +14,25 @@ class Motor:
             self.forward.duty_u16(0)
 
 class TwoWheel:
-    def __init__(self, pins):
+    def __init__(self, pins, axil_length):
         self.l_motor = Motor(pins["left"])
         self.r_motor = Motor(pins["right"])
+        self.width = axil_length
+
+    def rot(self, pwm, r):
+        if r == 0:
+            lpwm = pwm
+            rpwm = pwm
+        elif r > 0:
+            lpwm = -pwm
+            rpwm = ( r-self.width/2 )/( r+self.width/2 ) * pwm
+        elif r < 0:
+            lpwm = -( r+self.width/2)/( r-self.width/2 ) * pwm
+            rpwm = pwm
+
+        self.l_motor.set(lpwm)
+        self.r_motor.set(rpwm)
+
+    def straight(self, pwm):
+        self.l_motor.set(pwm)
+        self.r_motor.set(pwm)

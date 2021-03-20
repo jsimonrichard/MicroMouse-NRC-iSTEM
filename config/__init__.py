@@ -1,0 +1,1 @@
+AXIL_LENGTH = 13.5 # cm

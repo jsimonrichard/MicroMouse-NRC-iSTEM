@@ -1,8 +1,6 @@
 import utime
 from config import songs
 
-from .movement import move, enroute
-
 class Direction:
     UP = 1
     DOWN = 3
@@ -15,6 +13,13 @@ class State:
     DASH = 2
     DASH_BACK = 3
 
+directions = [(1,0), (0,-1), (-1,0), (0,1)]
+
+def _is_square(ping):
+    for v in ping:
+        if v > 300: # Ping sensor timed out
+            return False
+    return True
 
 class Robot:
     def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE, SOLUTIONS):
@@ -23,7 +28,7 @@ class Robot:
         self._motors = motors
         self._ping_collection = ping_collection
         self._dht_sensor = dht_sensor
-        self.maze = maze
+        self._maze = maze
         self.UNIT_SIZE = UNIT_SIZE
         self.SOLUTIONS = SOLUTIONS
 
@@ -33,7 +38,7 @@ class Robot:
         self.orientation = Direction.UP
 
         self.state = None
-        self.enroute = False
+        self.enroute_state = False
         self.enroute_path = []
 
         self.speed = 20000
@@ -59,15 +64,15 @@ class Robot:
     def _loop(self):
         while True:
             # Update ping values
-            self.update_ping()
-            self.update_pos()
+            self._update_ping()
+            self._update_pos()
             print(self.pos)
             #print(self._dht_sensor.temperature)
             utime.sleep_ms(1000)
 
             # Run logic for the current state
-            if self.enroute:
-                enroute(self)
+            if self.enroute_state:
+                self._enroute()
             else:
                 if self.state == State.CRAWL:
                     self._crawl()
@@ -83,7 +88,7 @@ class Robot:
         self._bzz.play(songs.CRAWL)
 
     def _crawl(self):
-        self.maze.setVisited(self.pos)
+        self._maze.setVisited(self.pos)
 
         went = False
         for k in range(4):
@@ -92,14 +97,14 @@ class Robot:
                 went = True
 
         if not went:
-            targets = self.maze.getUnvisited()
+            targets = self._maze.getUnvisited()
 
             if not targets:
                 self._start_homing()
                 targets = [(0,0)]
 
-            self.enroute = True
-            self.enroute_path = self.maze.solvePath(self.pos, targets)
+            self.enroute_state = True
+            self.enroute_path = self._maze.solvePath(self.pos, targets)
 
     def _start_homing(self):
         self.state = State.HOMING
@@ -117,10 +122,10 @@ class Robot:
 
     def _dash(self):
         self.speed += self.step_up_factor
-        self.enroute_path = self.maze.solvePath(self.pos, self.SOLUTIONS)
-        self.enroute = True
+        self.enroute_path = self._maze.solvePath(self.pos, self.SOLUTIONS)
+        self.enroute_state = True
 
-    def update_ping(self):
+    def _update_ping(self):
         ping = self._ping_collection.ping()
         self.del_ping = [b - a for a,b in zip(self.ping, ping)]
         self.ping = ping
@@ -128,7 +133,7 @@ class Robot:
         if self.last_unit_ping == []:
             self.last_unit_ping = ping
 
-    def update_pos(self):
+    def _update_pos(self):
         # Get change in position
         delta = [b - a for a,b in zip(self.ping, self.last_unit_ping)]
 
@@ -149,8 +154,30 @@ class Robot:
             self.pos = (self.pos[0]+di, self.pos[1]+dj)
             self.last_unit_ping = self.ping
 
-    def _rot_orientation_cw(self):
-        self.orientation = (self.orientation-1) % 4
+    def _move(self, direction):
+        # Orient the robot
+        if direction+self.orientation%2:
+            self._motors.rot( self.speed, 0 )
+            utime.sleep_ms(200)
+            while True:
+                self._update_ping()
+                if _is_square(self.ping):
+                    self.orientation = (self.orientation+1) % 4
+                    break
+                utime.sleep_ms(10)
 
-    def _rot_orientation_ccw(self):
-        self.orientation = (self.orientation+1) % 4
+        # Move
+        start_pos = self.pos
+        target = [ a+b for a, b in zip(start_pos, directions[direction]) ]
+
+        while self.pos != target:
+            if self.orientation == direction:
+                self._motors.straight(self.speed)
+            else:
+                self._motors.straight(-self.speed)
+            self._update_ping()
+            self._update_pos()
+            utime.sleep_ms(10)
+
+    def _enroute(self):
+        ...

@@ -10,7 +10,7 @@ class Motor:
             self.forward.duty_u16(pwm)
             self.backward.duty_u16(0)
         else:
-            self.backward.duty_u16(pwm)
+            self.backward.duty_u16(-pwm)
             self.forward.duty_u16(0)
 
 class TwoWheel:
@@ -35,4 +35,8 @@ class TwoWheel:
 
     def straight(self, pwm):
         self.l_motor.set(pwm)
-        self.r_motor.set(pwm)
+        self.r_motor.set(-int(pwm*0.95))
+
+    def stop(self):
+        self.l_motor.set(0)
+        self.r_motor.set(0)

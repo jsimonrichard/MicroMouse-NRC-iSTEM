@@ -8,11 +8,11 @@ BUZZER_PIN = 21
 DHT_PIN = 20
 
 MOTOR_PINS = {
-    "left": {
+    "right": {
         "forward": 6,
         "backward": 7
     },
-    "right": {
+    "left": {
         "forward": 8,
         "backward": 9
     }

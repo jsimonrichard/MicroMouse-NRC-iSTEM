@@ -93,7 +93,7 @@ class Robot:
         went = False
         for k in range(4):
             if self.ping[k] > self.UNIT_SIZE[(self.orientation+k)%2]:
-                move(self, k)
+                self._move(self, k)
                 went = True
 
         if not went:

@@ -24,8 +24,8 @@ class TwoWheel:
             lpwm = pwm
             rpwm = pwm
         elif r > 0:
-            lpwm = -pwm
-            rpwm = ( r-self.width/2 )/( r+self.width/2 ) * pwm
+            lpwm = pwm
+            rpwm = -( r-self.width/2 )/( r+self.width/2 ) * pwm
         elif r < 0:
             lpwm = -( r+self.width/2)/( r-self.width/2 ) * pwm
             rpwm = pwm

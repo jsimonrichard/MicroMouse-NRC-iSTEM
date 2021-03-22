@@ -107,11 +107,14 @@ class Maze:
     def solvePath(self, start_pos, targets):
         parents, end = self._solve(start_pos, targets=targets)
 
-        path = []
+        path = {}
         pos = end
-        while pos:
-            path.append(pos)
-            pos = parents[pos]
+        parent = parents[pos]
+        while parent:
+            path[parent] = pos
+            pos = parent
+            parent = parents[pos]
+
 
         return path
 

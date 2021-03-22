@@ -15,12 +15,6 @@ class State:
 
 directions = [(1,0), (0,-1), (-1,0), (0,1)]
 
-def _is_square(ping):
-    for v in ping:
-        if v > 300: # Ping sensor timed out
-            return False
-    return True
-
 class Robot:
     def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE, SOLUTIONS):
         self._btn = btn
@@ -35,7 +29,7 @@ class Robot:
         self.step_up_factor = 5
 
         self.pos = (0,0)
-        self.orientation = Direction.UP
+        self.orientation = Direction.LEFT
 
         self.state = None
         self.enroute_state = False
@@ -66,9 +60,9 @@ class Robot:
             # Update ping values
             self._update_ping()
             self._update_pos()
-            print(self.pos)
+            print("Pos:", self.pos)
             #print(self._dht_sensor.temperature)
-            utime.sleep_ms(1000)
+            utime.sleep_ms(10)
 
             # Run logic for the current state
             if self.enroute_state:
@@ -93,7 +87,7 @@ class Robot:
         went = False
         for k in range(4):
             if self.ping[k] > self.UNIT_SIZE[(self.orientation+k)%2]:
-                self._move(self, k)
+                self._move((self.orientation+k)%4)
                 went = True
 
         if not went:
@@ -135,11 +129,13 @@ class Robot:
 
     def _update_pos(self):
         # Get change in position
-        delta = [b - a for a,b in zip(self.ping, self.last_unit_ping)]
+        delta = [a - b for a,b in zip(self.ping, self.last_unit_ping)]
+        print(delta)
 
         dx = 0
         dy = 0
         # Only consider changes in direction of movement
+        print("Orientation:", self.orientation)
         if self.orientation%2 == 0:
             c = 1 if self.orientation==0 else -1
             dx = c * (delta[2]-delta[0])/2
@@ -154,21 +150,20 @@ class Robot:
             self.pos = (self.pos[0]+di, self.pos[1]+dj)
             self.last_unit_ping = self.ping
 
+    def _reset_del_ping(self):
+        self.last_unit_ping = self.ping
+        self.del_ping = [0,0,0,0]
+
     def _move(self, direction):
         # Orient the robot
-        if direction+self.orientation%2:
-            self._motors.rot( self.speed, 0 )
-            utime.sleep_ms(200)
-            while True:
-                self._update_ping()
-                if _is_square(self.ping):
-                    self.orientation = (self.orientation+1) % 4
-                    break
-                utime.sleep_ms(10)
+        print(direction)
+        if (direction+self.orientation)%2:
+            self._rot_ccw()
 
         # Move
         start_pos = self.pos
-        target = [ a+b for a, b in zip(start_pos, directions[direction]) ]
+        delta = directions[direction]
+        target = (start_pos[0]+delta[0], start_pos[1]+delta[1])
 
         while self.pos != target:
             if self.orientation == direction:
@@ -178,6 +173,25 @@ class Robot:
             self._update_ping()
             self._update_pos()
             utime.sleep_ms(10)
+            # print("Pos:", self.pos)
+
+        print("Arrived at", target)
+        self._motors.stop()
+
+    def _rot_ccw(self):
+        self._motors.rot(-30000, 0)
+        utime.sleep_ms(175)
+        self._motors.stop()
+
+        self.orientation = (self.orientation+1) % 4
+
+        self._update_ping()
+        self._reset_del_ping()
 
     def _enroute(self):
-        ...
+        if self.pos in self.enroute_path:
+            delta = (self.enroute_path[self.pos][0]-self.pos[0], self.enroute_path[self.pos][1]-self.pos[1])
+            direction = directions.index(delta)
+            self._move(direction)
+        else:
+            raise Exception("The robutt is off track")

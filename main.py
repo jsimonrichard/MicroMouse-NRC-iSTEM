@@ -14,7 +14,7 @@ from drivers import button, buzzer, motor, ping
 from maze import Maze
 from robot import Robot
 
-print("[PICO] Imported Libraries")
+print("Imported Libraries")
 
 print("Initializing...")
 # Turn on Light
@@ -50,7 +50,7 @@ robot = Robot(
 
 utime.sleep_ms(100)
 led.low()
-print("[PICO] Initialized")
+print("Pico Initialized")
 
 robot.Start()
 

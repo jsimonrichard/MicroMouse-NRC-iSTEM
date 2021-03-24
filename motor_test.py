@@ -1,5 +1,6 @@
 """
 Test for the motors
+motor_test.py
 """
 
 from machine import Pin
@@ -26,8 +27,6 @@ motors = TwoWheel(MOTOR_PINS, AXIL_LENGTH)
 print("Let's goooooooo")
 
 motors.straight(speed)
-sleep_ms(3000)
-motors.straight(-speed)
 sleep_ms(3000)
 motors.stop()
 

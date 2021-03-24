@@ -1,4 +1,4 @@
-UNIT_SIZE = (20, 20) # cm
+UNIT_SIZE = (25.4, 25.4) # cm
 MAZE_SIZE = (10,10) # units
 
 SOLUTIONS = [

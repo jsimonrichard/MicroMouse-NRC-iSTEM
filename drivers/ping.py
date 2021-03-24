@@ -1,10 +1,13 @@
 from machine import Pin
 from utime import ticks_us, sleep_us
 
-class PingSensor:
-    def __init__(self, pins):
+class PingProximitySensor:
+    def __init__(self, pins, threshold):
         self.echo = Pin(pins["echo"], Pin.IN)
         self.trig = Pin(pins["trig"], Pin.OUT)
+        self.threshold = threshold
+
+        self.ping_value = 0
 
     def ping(self):
         """
@@ -29,15 +32,24 @@ class PingSensor:
             if dur > 20000:
                 break
 
-        distance = dur/58 # in cm
-        return distance
+        self.ping_value = dur/58 # in cm
 
-class PingCollection:
+    def getProx(self):
+        return self.ping_value <= self.threshold
+
+class PingProxCollection:
     def __init__(self, sensors):
         self.sensors = sensors
 
     def ping(self):
         out = []
         for sensor in self.sensors:
-            out.append( sensor.ping() )
+            sensor.ping()
+            out.append( sensor.ping_value )
+        return out
+
+    def getProx(self):
+        out = []
+        for sensor in self.sensors:
+            out.append( sensor.getProx() )
         return out

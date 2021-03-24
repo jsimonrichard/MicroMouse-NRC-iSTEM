@@ -7,7 +7,7 @@ from machine import Pin
 import utime
 import dht
 
-from config import AXIL_LENGTH
+from config import AXIL_LENGTH, MIN_SENSOR_WIDTH
 from config.pins import BUTTON_PIN, BUZZER_PIN, MOTOR_PINS, PING_PINS
 from config.maze import UNIT_SIZE, MAZE_SIZE, SOLUTIONS
 from drivers import button, buzzer, motor, ping
@@ -27,8 +27,9 @@ bzz = buzzer.Buzzer(BUZZER_PIN)
 
 motors = motor.TwoWheel(MOTOR_PINS, AXIL_LENGTH)
 
-ping_sensors = list(map(ping.PingSensor, PING_PINS))
-ping_collection = ping.PingCollection(ping_sensors)
+threshold = max(UNIT_SIZE) - MIN_SENSOR_WIDTH
+ping_sensors = list(map(lambda pins: ping.PingProximitySensor(pins, threshold), PING_PINS))
+ping_collection = ping.PingProxCollection(ping_sensors)
 
 dht_sensor = dht.DHT11(Pin(20))
 

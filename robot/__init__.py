@@ -37,9 +37,11 @@ class Robot:
 
         self.speed = 20000
 
+        self.prox = []
         self.ping = []
-        self.del_ping = []
-        self.last_unit_ping = []
+
+        self.anchor_pos = self.pos
+        self.anchor_time = utime.ticks_ms()
 
     def Start(self):
 
@@ -59,23 +61,30 @@ class Robot:
         while True:
             # Update ping values
             self._update_ping()
-            self._update_pos()
+            print("Prox:", self.prox)
             print("Pos:", self.pos)
             #print(self._dht_sensor.temperature)
-            utime.sleep_ms(10)
+            utime.sleep_ms(1000)
 
-            # Run logic for the current state
-            if self.enroute_state:
-                self._enroute()
-            else:
-                if self.state == State.CRAWL:
-                    self._crawl()
-                elif self.state == State.HOMING:
-                    self._homing()
-                elif self.state == State.DASH:
-                    self._dash()
-                elif self.state == State.DASH_BACK:
-                    self._homing(step_up=self.step_up_factor)
+            if self._btn.isPressed:
+                self._bzz.play(songs.CRAWL)
+                utime.sleep(1)
+                self._rot_ccw(phantom=True)
+
+            # # Run logic for the current state
+            # if self.enroute_state:
+            #     self._enroute()
+            # else:
+            #     if self.state == State.CRAWL:
+            #         self._crawl()
+            #     elif self.state == State.HOMING:
+            #         self._homing()
+            #     elif self.state == State.DASH:
+            #         self._dash()
+            #     elif self.state == State.DASH_BACK:
+            #         self._homing(step_up=self.step_up_factor)
+
+            print()
 
     def _start_crawl(self):
         self.state = State.CRAWL
@@ -86,7 +95,7 @@ class Robot:
 
         went = False
         for k in range(4):
-            if self.ping[k] > self.UNIT_SIZE[(self.orientation+k)%2]:
+            if self.prox[k]: # TODO: Check if not visited
                 self._move((self.orientation+k)%4)
                 went = True
 
@@ -120,39 +129,12 @@ class Robot:
         self.enroute_state = True
 
     def _update_ping(self):
-        ping = self._ping_collection.ping()
-        self.del_ping = [b - a for a,b in zip(self.ping, ping)]
-        self.ping = ping
+        self.ping = self._ping_collection.ping()
+        self.prox = self._ping_collection.getProx()
 
-        if self.last_unit_ping == []:
-            self.last_unit_ping = ping
-
-    def _update_pos(self):
-        # Get change in position
-        delta = [a - b for a,b in zip(self.ping, self.last_unit_ping)]
-        print(delta)
-
-        dx = 0
-        dy = 0
-        # Only consider changes in direction of movement
-        print("Orientation:", self.orientation)
-        if self.orientation%2 == 0:
-            c = 1 if self.orientation==0 else -1
-            dx = c * (delta[2]-delta[0])/2
-        else:
-            c = 1 if self.orientation==3 else -1
-            dy = c * (delta[2]-delta[0])/2
-
-        # Get di, dj
-        di = int( dx/self.UNIT_SIZE[0] )
-        dj = int( dy/self.UNIT_SIZE[1] )
-        if di or dj:
-            self.pos = (self.pos[0]+di, self.pos[1]+dj)
-            self.last_unit_ping = self.ping
-
-    def _reset_del_ping(self):
-        self.last_unit_ping = self.ping
-        self.del_ping = [0,0,0,0]
+    def _reset_anchor(self):
+        self.anchor_pos = self.pos
+        self.anchor_time = utime.ticks_ms()
 
     def _move(self, direction):
         # Orient the robot
@@ -161,32 +143,28 @@ class Robot:
             self._rot_ccw()
 
         # Move
-        start_pos = self.pos
+        if self.orientation == direction:
+            self._motors.straight(self.speed)
+        else:
+            self._motors.straight(-self.speed)
+
+        utime.sleep_ms(10) # TODO: Add time estimate here
+        self._motors.stop()
+
         delta = directions[direction]
-        target = (start_pos[0]+delta[0], start_pos[1]+delta[1])
+        self.pos = (self.pos[0]+delta[0], self.pos[1]+delta[1])
 
-        while self.pos != target:
-            if self.orientation == direction:
-                self._motors.straight(self.speed)
-            else:
-                self._motors.straight(-self.speed)
-            self._update_ping()
-            self._update_pos()
-            utime.sleep_ms(10)
-            # print("Pos:", self.pos)
+        self._reset_anchor()
 
-        print("Arrived at", target)
-        self._motors.stop()
-
-    def _rot_ccw(self):
-        self._motors.rot(-30000, 0)
-        utime.sleep_ms(175)
-        self._motors.stop()
+    def _rot_ccw(self, phantom=False):
+        if not phantom:
+            self._motors.rot(-30000, 0)
+            utime.sleep_ms(175)
+            self._motors.stop()
 
         self.orientation = (self.orientation+1) % 4
 
-        self._update_ping()
-        self._reset_del_ping()
+        self._reset_anchor()
 
     def _enroute(self):
         if self.pos in self.enroute_path:

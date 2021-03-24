@@ -1,1 +1,2 @@
 AXIL_LENGTH = 13.5 # cm
+MIN_SENSOR_WIDTH = 10 # cm

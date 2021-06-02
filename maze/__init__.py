@@ -124,8 +124,8 @@ class Maze:
     def getUnvisited(self):
         out = []
 
-        for i in range(len(self._maze_size[0])):
-            for j in range(len(self._maze_size[1])):
+        for i in range(self._maze_size[0]):
+            for j in range(self._maze_size[1]):
                 if not self._visited[i][j]:
                     out.append((i,j))
 

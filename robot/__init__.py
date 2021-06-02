@@ -1,5 +1,5 @@
 import utime
-from config import songs
+from config import songs, ROT_PWM, ROT_TIME, CRAWL_PWM, CRAWL_VEL
 
 class Direction:
     UP = 1
@@ -16,7 +16,7 @@ class State:
 directions = [(1,0), (0,-1), (-1,0), (0,1)]
 
 class Robot:
-    def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE, SOLUTIONS):
+    def __init__(self, btn, bzz, motors, ping_collection, dht_sensor, maze, UNIT_SIZE, SOLUTIONS, ping_threshold):
         self._btn = btn
         self._bzz = bzz
         self._motors = motors
@@ -26,7 +26,7 @@ class Robot:
         self.UNIT_SIZE = UNIT_SIZE
         self.SOLUTIONS = SOLUTIONS
 
-        self.step_up_factor = 5
+        self.bounce_threshold = ping_threshold*0.8
 
         self.pos = (0,0)
         self.orientation = Direction.LEFT
@@ -35,13 +35,10 @@ class Robot:
         self.enroute_state = False
         self.enroute_path = []
 
-        self.speed = 20000
-
         self.prox = []
         self.ping = []
 
         self.anchor_pos = self.pos
-        self.anchor_time = utime.ticks_ms()
 
     def Start(self):
 
@@ -61,6 +58,7 @@ class Robot:
         while True:
             # Update ping values
             self._update_ping()
+            print("Ping:", self.ping)
             print("Prox:", self.prox)
             print("Pos:", self.pos)
             #print(self._dht_sensor.temperature)
@@ -71,18 +69,18 @@ class Robot:
                 utime.sleep(1)
                 self._rot_ccw(phantom=True)
 
-            # # Run logic for the current state
-            # if self.enroute_state:
-            #     self._enroute()
-            # else:
-            #     if self.state == State.CRAWL:
-            #         self._crawl()
-            #     elif self.state == State.HOMING:
-            #         self._homing()
-            #     elif self.state == State.DASH:
-            #         self._dash()
-            #     elif self.state == State.DASH_BACK:
-            #         self._homing(step_up=self.step_up_factor)
+            # Run logic for the current state
+            if self.enroute_state:
+                self._enroute()
+            else:
+                if self.state == State.CRAWL:
+                    self._crawl()
+                elif self.state == State.HOMING:
+                    self._homing()
+                elif self.state == State.DASH:
+                    self._dash()
+                elif self.state == State.DASH_BACK:
+                    self._homing()
 
             print()
 
@@ -95,7 +93,7 @@ class Robot:
 
         went = False
         for k in range(4):
-            if self.prox[k]: # TODO: Check if not visited
+            if not self.prox[k]: # TODO: Check if not visited
                 self._move((self.orientation+k)%4)
                 went = True
 
@@ -116,7 +114,7 @@ class Robot:
     def _start_dash_back(self):
         self.state = State.DASH_BACK
 
-    def _homing(self, step_up=0):
+    def _homing(self):
         self._start_dash()
 
     def _start_dash(self):
@@ -124,7 +122,6 @@ class Robot:
         self._bzz.play(songs.DASH)
 
     def _dash(self):
-        self.speed += self.step_up_factor
         self.enroute_path = self._maze.solvePath(self.pos, self.SOLUTIONS)
         self.enroute_state = True
 
@@ -138,17 +135,36 @@ class Robot:
 
     def _move(self, direction):
         # Orient the robot
-        print(direction)
+        print("direction:", direction)
         if (direction+self.orientation)%2:
             self._rot_ccw()
 
         # Move
-        if self.orientation == direction:
-            self._motors.straight(self.speed)
-        else:
-            self._motors.straight(-self.speed)
+        start_time = utime.ticks_ms()
+        dur = self.UNIT_SIZE[direction%2]*1000/CRAWL_VEL
+        print("Duration:", dur)
 
-        utime.sleep_ms(10) # TODO: Add time estimate here
+        while utime.ticks_ms()-start_time <= dur:
+            if self.orientation == direction:
+                if self.ping[(self.orientation+1)%4] < self.bounce_threshold:
+                    print("asdfasf1")
+                    self._motors.rot(CRAWL_PWM, 40)
+                elif self.ping[(self.orientation-1)%4] < self.bounce_threshold:
+                    print("asdfasf2")
+                    self._motors.rot(CRAWL_PWM, -40)
+                else:
+                    self._motors.straight(CRAWL_PWM)
+            else:
+                if self.ping[(self.orientation-1)%4] < self.bounce_threshold:
+                    print("asdfasf3")
+                    self._motors.rot(-CRAWL_PWM, 40)
+                elif self.ping[(self.orientation+1)%4] < self.bounce_threshold:
+                    print("asdfas4")
+                    self._motors.rot(-CRAWL_PWM, -40)
+                else:
+                    self._motors.straight(-CRAWL_PWM)
+            self._update_ping()
+
         self._motors.stop()
 
         delta = directions[direction]
@@ -158,8 +174,8 @@ class Robot:
 
     def _rot_ccw(self, phantom=False):
         if not phantom:
-            self._motors.rot(-30000, 0)
-            utime.sleep_ms(175)
+            self._motors.rot(-ROT_PWM, 0)
+            utime.sleep_ms(ROT_TIME)
             self._motors.stop()
 
         self.orientation = (self.orientation+1) % 4

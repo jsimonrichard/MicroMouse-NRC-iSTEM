@@ -1,4 +1,7 @@
 from machine import Pin, PWM
+from utime import sleep_ms
+
+from config import L_MOTOR_DRIFT, R_MOTOR_DRIFT
 
 class Motor:
     def __init__(self, pins):
@@ -30,13 +33,18 @@ class TwoWheel:
             lpwm = -( r+self.width/2)/( r-self.width/2 ) * pwm
             rpwm = pwm
 
-        self.l_motor.set(lpwm)
-        self.r_motor.set(rpwm)
+        self.l_motor.set(int(L_MOTOR_DRIFT*lpwm))
+        self.r_motor.set(int(R_MOTOR_DRIFT*rpwm))
 
     def straight(self, pwm):
-        self.l_motor.set(pwm)
-        self.r_motor.set(-int(pwm*0.95))
+        self.l_motor.set(int(L_MOTOR_DRIFT*pwm))
+        self.r_motor.set(-int(R_MOTOR_DRIFT*pwm))
 
-    def stop(self):
+    def stop(self, jerk=0):
+        if jerk:
+            self.l_motor.set(int(jerk*20000))
+            self.r_motor.set(int(-jerk*20000))
+            sleep_ms(20)
+
         self.l_motor.set(0)
         self.r_motor.set(0)

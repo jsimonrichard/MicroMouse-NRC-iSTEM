@@ -13,21 +13,37 @@ from drivers.motor import TwoWheel
 from drivers.button import Button
 
 led = Pin(25, Pin.OUT)
-led.high()
-
 btn = Button(BUTTON_PIN)
-while not btn.isPressed:
-    ...
-led.low()
-sleep_ms(1000)
 
 speed = 30000
 motors = TwoWheel(MOTOR_PINS, AXIL_LENGTH)
 
-print("Let's goooooooo")
+def main():
+    led.high()
 
-motors.straight(speed)
-sleep_ms(3000)
-motors.stop()
+    while not btn.isPressed:
+        ...
+    led.low()
+    sleep_ms(500)
 
-print("Yeah!!!!!")
+    print("Let's goooooooo")
+
+    motors.straight(speed)
+    sleep_ms(1000)
+    motors.stop()
+
+    print("Yeah!!!!!")
+
+def _main():
+    led.high()
+    while not btn.isPressed:
+        ...
+    led.low()
+
+    sleep_ms(500)
+
+    while True:
+        motors.straight(speed)
+        sleep_ms(100)
+        motors.stop(jerk=-1)
+        sleep_ms(100)
